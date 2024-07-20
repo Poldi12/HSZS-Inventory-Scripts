@@ -1,3 +1,5 @@
 # ignore filetype
 *.csv
-*.pdf
+
+# ignore folder
+Bills/
