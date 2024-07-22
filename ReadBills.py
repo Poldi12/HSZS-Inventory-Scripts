@@ -17,14 +17,36 @@ def read_pdf(file_path):
 
 def read_csv(file_path):
     """
-    return: A list of rows, where each row is a list of cell values.
+    Reads the CSV file and returns its contents as a list of rows.
+    
+    :param file_path: The path to the CSV file.
+    :return: A list of rows, where each row is a list of cell values.
     """
     with open(file_path, mode='r', newline='') as file:
         reader = csv.reader(file)
         rows = [row for row in reader]
     return rows
 
-def write_csv(file_path, row_index, col_index, new_value):
+def write_csv(file_path, rows):
+    """
+    Writes the list of rows to the CSV file.
+    
+    :param file_path: The path to the CSV file.
+    :param rows: A list of rows, where each row is a list of cell values.
+    """
+    with open(file_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(rows)
+
+def overwrite_cell(file_path, row_index, col_index, new_value):
+    """
+    Overwrites a specific cell in the CSV file with a new value.
+    
+    :param file_path: The path to the CSV file.
+    :param row_index: The index of the row containing the cell to overwrite.
+    :param col_index: The index of the column containing the cell to overwrite.
+    :param new_value: The new value to write to the cell.
+    """
     # Read the current contents of the CSV file
     rows = read_csv(file_path)
     
@@ -50,8 +72,7 @@ def extract_product(pdf_text):
             del stringlist[index-1:]
     print(stringlist)
 
-    #get products and write them to the Inventory file
-
+    #get product and quantity
     for line in stringlist:
         try:
             #keg beer is calculated different
@@ -70,14 +91,9 @@ def extract_product(pdf_text):
             print(line[0:5] + " skipped")
 
 
-
 # main
 billdir = "Bills/"
 onlyfiles = [f for f in listdir(billdir) if isfile(join(billdir, f))]
-
-#pdf_text = read_pdf('Bills/11555_94046276_Rechnung.pdf')
-#extract_product(pdf_text)
-
 
 for pdf in onlyfiles:
     print(pdf)
