@@ -3,7 +3,8 @@ This Project aims to simplify inventory management of consumables(Hopfenkracherl
 
 # Setup
 ```
-pip install
+pip install pdfplumber
+ 
 ```
 
 # Functions
