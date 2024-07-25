@@ -22,15 +22,9 @@ def read_pdf(file_path):
         return text
 
 def read_csv(file_path):
-    """
-    Reads the CSV file and returns its contents as a list of rows.
-    
-    :param file_path: The path to the CSV file.
-    :return: A list of rows, where each row is a list of cell values.
-    """
     with open(file_path, mode='r', newline='') as csv_file:
         reader = csv.reader(csv_file, delimiter=';')
-        rows = [row for row in reader]
+        rows = [row for row in reader] #list of lists (row(column)) 
     return rows
 
 def write_csv(file_path, rows):
@@ -45,14 +39,6 @@ def write_csv(file_path, rows):
         writer.writerows(rows)
 
 def overwrite_cell(file_path, row_index, col_index, new_value):
-    """
-    Overwrites a specific cell in the CSV file with a new value.
-    
-    :param file_path: The path to the CSV file.
-    :param row_index: The index of the row containing the cell to overwrite.
-    :param col_index: The index of the column containing the cell to overwrite.
-    :param new_value: The new value to write to the cell.
-    """
     # Read the current contents of the CSV file
     rows = read_csv(file_path)
     
@@ -72,6 +58,7 @@ def update_products_in_csv(extracted_product_list):
         for index_r, row in enumerate(csv_content):
             if row[5] == str(product.ID): #product ids match
                 overwrite_cell('Inventory.csv', index_r, 1, int(row[2]) + int(product.value)) # 1 is "Bestand Real"
+                break
             elif(index_r == len(csv_content)-1): #product not found in csv file
                 print("Product ID not in csv file: " + str(product.ID))
 
@@ -86,7 +73,6 @@ def extract_product(pdf_text):
             del string_list[index:]
         if 'Art.Nr.' in line:
             del string_list[index-1:]
-    print(string_list)
 
     #save product and quantity to a list
     extracted_product_list = []
@@ -121,3 +107,5 @@ for pdf in only_files:
     print(pdf)
     pdf_text = read_pdf('Bills/'+ pdf)
     extract_product(pdf_text)
+
+input('Succsessful!')
