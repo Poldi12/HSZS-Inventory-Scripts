@@ -5,6 +5,12 @@ from os.path import isfile, join
 
 import re
 import csv
+from dataclasses import dataclass
+
+@dataclass
+class ProductInfo:
+    ID: str
+    value: int
 
 def read_pdf(file_path):
     # open the PDF file
@@ -22,8 +28,8 @@ def read_csv(file_path):
     :param file_path: The path to the CSV file.
     :return: A list of rows, where each row is a list of cell values.
     """
-    with open(file_path, mode='r', newline='') as file:
-        reader = csv.reader(file)
+    with open(file_path, mode='r', newline='') as csv_file:
+        reader = csv.reader(csv_file, delimiter=';')
         rows = [row for row in reader]
     return rows
 
@@ -34,8 +40,8 @@ def write_csv(file_path, rows):
     :param file_path: The path to the CSV file.
     :param rows: A list of rows, where each row is a list of cell values.
     """
-    with open(file_path, mode='w', newline='') as file:
-        writer = csv.writer(file)
+    with open(file_path, mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file, delimiter=';')
         writer.writerows(rows)
 
 def overwrite_cell(file_path, row_index, col_index, new_value):
@@ -59,43 +65,59 @@ def overwrite_cell(file_path, row_index, col_index, new_value):
     # Write the modified contents back to the CSV file
     write_csv(file_path, rows)
 
-def extract_product(pdf_text):
-    #delete irrelevant lines, which could mess with string operations below
-    stringlist = pdf_text.splitlines()
-    del stringlist[0:21] #overhead 1.page
-    for index, line in enumerate(stringlist):
-        if 'Seite' in line:
-            del stringlist[index:index+10] #overhead n+1.page
-        if 'Gebindezusammenstellung' in line: #does not work sometimes, so wie also use Art.Nr.
-            del stringlist[index:]
-        if 'Art.Nr.' in line:
-            del stringlist[index-1:]
-    print(stringlist)
+def update_products_in_csv(extracted_product_list):
+    csv_content = read_csv('Inventory.csv')
+    
+    for product in extracted_product_list:
+        for index_r, row in enumerate(csv_content):
+            if row[5] == str(product.ID): #product ids match
+                overwrite_cell('Inventory.csv', index_r, 1, int(row[2]) + int(product.value)) # 1 is "Bestand Real"
+            elif(index_r == len(csv_content)-1): #product not found in csv file
+                print("Product ID not in csv file: " + str(product.ID))
 
-    #get product and quantity
-    for line in stringlist:
+def extract_product(pdf_text):
+    #delete irrelevant lines, which could mess with further string operations
+    string_list = pdf_text.splitlines()
+    del string_list[0:21] #overhead 1.page
+    for index, line in enumerate(string_list):
+        if 'Seite' in line:
+            del string_list[index:index+10] #overhead n+1.page
+        if 'Gebindezusammenstellung' in line: #does not work sometimes, so wie also use Art.Nr.
+            del string_list[index:]
+        if 'Art.Nr.' in line:
+            del string_list[index-1:]
+    print(string_list)
+
+    #save product and quantity to a list
+    extracted_product_list = []
+    for index, line in enumerate(string_list):
         try:
             #keg beer is calculated different
             if line[0:5] == '10095':
-                backcut = re.split('KEG', line)
-                numberbeer = backcut[0][len(backcut[0])-3:]
-                print(numberbeer)
+                back_cut = re.split('KEG', line)
+                number_beer = back_cut[0][len(back_cut[0])-3:]
 
-            elif line[0:4].isdigit():
-                frontcut = re.split('\/', line)
-                backcut = re.split('KI', frontcut[1])
-                numbers = re.split('\ ', backcut[0])
+                extracted_product_list.append(ProductInfo(line[0:5], number_beer))
+
+            elif line[0:5].isdigit():
+                front_cut = re.split('\/', line)
+                back_cut = re.split('KI', front_cut[1])
+                numbers = re.split('\ ', back_cut[0])
                 amount = int(numbers[0]) * int(numbers[1])
-                print(amount)
+                
+                extracted_product_list.append(ProductInfo(line[0:5], amount))
+
         except IndexError:
             print(line[0:5] + " skipped")
 
+    update_products_in_csv(extracted_product_list)
+
 
 # main
-billdir = "Bills/"
-onlyfiles = [f for f in listdir(billdir) if isfile(join(billdir, f))]
+bill_dir = "Bills/"
+only_files = [f for f in listdir(bill_dir) if isfile(join(bill_dir, f))]
 
-for pdf in onlyfiles:
+for pdf in only_files:
     print(pdf)
     pdf_text = read_pdf('Bills/'+ pdf)
     extract_product(pdf_text)
