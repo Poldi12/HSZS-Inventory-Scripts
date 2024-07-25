@@ -100,6 +100,7 @@ def extract_product(pdf_text):
 
 
 # main
+'''
 bill_dir = "Bills/"
 only_files = [f for f in listdir(bill_dir) if isfile(join(bill_dir, f))]
 
@@ -109,3 +110,4 @@ for pdf in only_files:
     extract_product(pdf_text)
 
 input('Succsessful!')
+'''
