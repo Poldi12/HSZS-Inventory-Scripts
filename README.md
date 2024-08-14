@@ -33,3 +33,8 @@ Also notices you, if it could not parse anything in the pdf or if it did not fin
 
 # Misc
 "program": "${file}"
+
+toto: credentials distinction testserver/real server
+    main user input and function calling handling
+    code cleanup
+    better documentation

@@ -98,16 +98,12 @@ def extract_product(pdf_text):
 
     update_products_in_csv(extracted_product_list)
 
-
 # main
-'''
-bill_dir = "Bills/"
-only_files = [f for f in listdir(bill_dir) if isfile(join(bill_dir, f))]
+def read_bills():
+    bill_dir = "Bills/"
+    only_files = [f for f in listdir(bill_dir) if isfile(join(bill_dir, f))]
 
-for pdf in only_files:
-    print(pdf)
-    pdf_text = read_pdf('Bills/'+ pdf)
-    extract_product(pdf_text)
-
-input('Succsessful!')
-'''
+    for pdf in only_files:
+        print(pdf)
+        pdf_text = read_pdf('Bills/'+ pdf)
+        extract_product(pdf_text)
