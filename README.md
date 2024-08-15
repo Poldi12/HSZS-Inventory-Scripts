@@ -1,5 +1,5 @@
 # Introduction
-This Project aims to simplify inventory management of consumables(Hopfenkracherl) for the "Hochspannungszeichensaal" at TU Graz.
+This project aims to simplify inventory management of consumables(Hopfenkracherl) with the dedicated kitchenserver.
 
 # Setup
 python 3.10
@@ -10,7 +10,7 @@ pip install selenium
 ```
 
 Generate a folder named "Bills" in the same directory as the scripts.
-Generate a "credentials.txt" file and place it in the same directory as the scripts.
+Generate a "credentials.txt" file and place it in the same directory as the scripts. Credentials have to contain your username in the first row, your password in the second, the production server in the third(10.110.0.42) and the testserver in the fourth(10.110.5.71).
 Obtain the "Inventory.csv" file and place it in the same directory as the scripts.
 
 Grant you Inventory file full permission (close all instances of the file!).
@@ -18,6 +18,9 @@ Windows Powershell:
 ```
 icacls "Inventory.csv" /grant Everyone:F
 ```
+# Application
+
+Executable versions can be found in the output/ folder.
 
 # Functions
 
@@ -33,8 +36,3 @@ Also notices you, if it could not parse anything in the pdf or if it did not fin
 
 # Misc
 "program": "${file}"
-
-toto: credentials distinction testserver/real server
-    main user input and function calling handling
-    code cleanup
-    better documentation
