@@ -56,7 +56,7 @@ def update_products_in_csv(extracted_product_list):
         for index_r, row in enumerate(csv_content):
             if row[5] == str(product.ID): # Product ids match
                 print(product.ID)
-                overwrite_cell('Inventory.csv', index_r, 1, int(row[2]) + int(product.value)) # 1 is "Bestand Real"
+                overwrite_cell('Inventory.csv', index_r, 6, int(product.value)) # 6 is "Einkauf"
                 break
             elif(index_r == len(csv_content)-1): # Product not found in csv file
                 print("Product ID not in csv file: " + str(product.ID))
